@@ -142,12 +142,8 @@ h3 {
   width: 56px;
   height: 56px;
   object-fit: contain;
-  animation: logo-pulse 4s ease-in-out infinite;
-}
-
-@keyframes logo-pulse {
-  0%, 100% { filter: drop-shadow(0 0 4px rgba(6, 182, 212, 0.3)); transform: scale(1); }
-  50% { filter: drop-shadow(0 0 12px rgba(6, 182, 212, 0.8)); transform: scale(1.05); }
+  transition: transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1), filter 0.3s ease;
+  will-change: transform;
 }
 
 .brand strong {
@@ -291,12 +287,8 @@ h3 {
   width: min(85vw, 1200px);
   transform: translateY(-50%) rotate(-5deg);
   filter: grayscale(0.2);
-  animation: subtle-float 12s ease-in-out infinite;
-}
-
-@keyframes subtle-float {
-  0%, 100% { transform: translateY(-50%) rotate(-5deg) scale(1); }
-  50% { transform: translateY(-52%) rotate(-3deg) scale(1.02); }
+  will-change: transform, filter;
+  transform-style: preserve-3d;
 }
 
 .hero-content {
@@ -492,6 +484,8 @@ h3 {
 }
 
 .service-card, .process-step, .project-card, .tech-layout > div {
+  position: relative;
+  overflow: hidden;
   padding: 32px;
   background: var(--surface);
   backdrop-filter: blur(20px);
@@ -501,7 +495,38 @@ h3 {
   transition: all 300ms cubic-bezier(0.4, 0, 0.2, 1);
   display: flex;
   flex-direction: column;
+  --glow-color: rgba(6, 182, 212, 0.15);
 }
+
+.service-card > *, .process-step > *, .project-card > *, .tech-layout > div > * {
+  position: relative;
+  z-index: 1;
+}
+
+.service-card::after, .process-step::after, .project-card::after, .tech-layout > div::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(
+    600px circle at var(--mouse-x, 50%) var(--mouse-y, 50%),
+    var(--glow-color),
+    transparent 40%
+  );
+  opacity: 0;
+  transition: opacity 0.4s ease;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.service-card:hover::after, .process-step:hover::after, .project-card:hover::after, .tech-layout > div:hover::after {
+  opacity: 1;
+}
+
+/* Unique Glow Colors for Process Grid */
+.process-grid .process-step:nth-child(1) { --glow-color: rgba(6, 182, 212, 0.25); } /* Cyan */
+.process-grid .process-step:nth-child(2) { --glow-color: rgba(16, 185, 129, 0.25); } /* Emerald */
+.process-grid .process-step:nth-child(3) { --glow-color: rgba(59, 130, 246, 0.25); } /* Blue */
+.process-grid .process-step:nth-child(4) { --glow-color: rgba(245, 158, 11, 0.25); } /* Amber */
 
 .service-card:hover, .process-step:hover, .project-card:hover, .tech-layout > div:hover {
   background: var(--surface-hover);
