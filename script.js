@@ -2,8 +2,27 @@ const yearElement = document.getElementById("year");
 const form = document.getElementById("contactForm");
 const formStatus = document.getElementById("formStatus");
 const submitButton = form.querySelector('button[type="submit"]');
+const revealItems = document.querySelectorAll(".reveal");
 
 yearElement.textContent = new Date().getFullYear();
+
+if ("IntersectionObserver" in window) {
+  const revealObserver = new IntersectionObserver(
+    (entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add("is-visible");
+          revealObserver.unobserve(entry.target);
+        }
+      });
+    },
+    { threshold: 0.14 }
+  );
+
+  revealItems.forEach((item) => revealObserver.observe(item));
+} else {
+  revealItems.forEach((item) => item.classList.add("is-visible"));
+}
 
 form.addEventListener("submit", async (event) => {
   event.preventDefault();
